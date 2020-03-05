@@ -1,0 +1,4 @@
+{
+  "ext": "*",
+  "exec": "node server.js"
+}
