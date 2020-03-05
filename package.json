@@ -1,10 +1,30 @@
 {
+  "name": "demo-ocx-face-detection",
+  "version": "1.0.0",
+  "description": "Demo OCX Face Detection",
+  "license": "MIT",
+  "contributors": [
+    {
+      "name": "Ulric",
+      "email": "ulricmf@gmail.com",
+      "url": "https://github.com/ulricmarques"
+    },
+    {
+      "name": "Bladerangel",
+      "email": "bladerangel10@gmail.com",
+      "url": "https://github.com/bladerangel"
+    }
+  ],
+  "homepage": "https://github.com/bladerangel/demo-ocx-face-detection",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bladerangel/demo-ocx-face-detection"
+  },
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "start:dev": "nodemon"
   },
-  "author": "justadudewhohacks",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.16.4",
     "request": "^2.88.0"
