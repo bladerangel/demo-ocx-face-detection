@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="face-api.js"></script>
+  <script src="js/commons.js"></script>
+  <script src="js/faceDetectionControls.js"></script>
+  <script src="reload/reload.js"></script>
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link href="styles/material-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/materialize.min.css" />
+  <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+  <script src="js/materialize.min.js"></script>
+</head>
+
+<body>
+  <div id="navbar"></div>
+  <div class="center-content page-container">
+    <div id="loader" class="loaderImg">
+      <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-blue-only">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="content">
+      <p class="bold italic">Imagem de referência</p>
+
+      <div style="position: relative" class="margin">
+        <img id="refImg" src="" style="max-width: 800px;" />
+        <canvas id="refImgOverlay" class="overlay" />
+      </div>
+
+      <div id="loaderImg" class="loaderImg">
+        <div class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row side-by-side">
+        <!-- image_selection_control -->
+        <div class="row">
+          <label>Selecionar imagem:</label>
+          <div>
+            <input id="refImgUploadInput" type="file" class="waves-effect btn bold" onchange="uploadRefImage()"
+              accept=".jpg, .jpeg, .png" />
+          </div>
+        </div>
+        <!-- image_selection_control -->
+      </div>
+
+      <p class="bold italic">Imagem de teste</p>
+
+      <div style="position: relative" class="margin">
+        <img id="queryImg" src="" style="max-width: 800px;" />
+        <canvas id="queryImgOverlay" class="overlay" />
+      </div>
+
+      <div id="loaderQueryImg" class="loaderImg">
+        <div class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row side-by-side">
+        <!-- image_selection_control -->
+        <div class="row">
+          <label>Selecionar imagem:</label>
+          <div>
+            <input id="queryImgUploadInput" type="file" class="waves-effect btn bold" onchange="uploadQueryImage()"
+              accept=".jpg, .jpeg, .png" />
+          </div>
+        </div>
+        <!-- image_selection_control -->
+      </div>
+    </div>
+
+    <!-- ssd_mobilenetv1_controls -->
+    <span id="ssd_mobilenetv1_controls">
+      <div class="row side-by-side">
+        <div class="row">
+          <label for="minConfidence">Confiança mínima:</label>
+          <input disabled value="0.5" id="minConfidence" type="text" class="bold" />
+        </div>
+        <button class="btn-floating btn-small waves-effect waves-light red" onclick="onDecreaseMinConfidence()">
+          <i class="material-icons">remove</i>
+        </button>
+        <button class="btn-floating btn-small waves-effect waves-light green" onclick="onIncreaseMinConfidence()">
+          <i class="material-icons">add</i>
+        </button>
+      </div>
+    </span>
+    <!-- ssd_mobilenetv1_controls -->
+  </div>
+
+  <script>
+    let faceMatcher = null;
+
+    async function uploadRefImage(e) {
+      $("#loaderImg").show();
+      const imgFile = $("#refImgUploadInput").get(0).files[0];
+      const img = await faceapi.bufferToImage(imgFile);
+      $("#refImg").get(0).src = img.src;
+      $("#loaderImg").hide();
+      updateReferenceImageResults();
+    }
+
+    async function loadRefImageFromUrl(url) {
+      const img = await requestExternalImage($("#refImgUrlInput").val());
+      $("#refImg").get(0).src = img.src;
+      updateReferenceImageResults();
+    }
+
+    async function uploadQueryImage(e) {
+      $("#loaderQueryImg").show();
+      const imgFile = $("#queryImgUploadInput").get(0).files[0];
+      const img = await faceapi.bufferToImage(imgFile);
+      $("#queryImg").get(0).src = img.src;
+      $("#loaderQueryImg").hide();
+      updateQueryImageResults();
+    }
+
+    async function loadQueryImageFromUrl(url) {
+      const img = await requestExternalImage($("#queryImgUrlInput").val());
+      $("#queryImg").get(0).src = img.src;
+      updateQueryImageResults();
+    }
+
+    async function updateReferenceImageResults() {
+      const inputImgEl = $("#refImg").get(0);
+      const canvas = $("#refImgOverlay").get(0);
+
+      const fullFaceDescriptions = await faceapi
+        .detectAllFaces(inputImgEl, getFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceDescriptors();
+
+      if (!fullFaceDescriptions.length) {
+        return;
+      }
+
+      // create FaceMatcher with automatically assigned labels
+      // from the detection results for the reference image
+      faceMatcher = new faceapi.FaceMatcher(fullFaceDescriptions);
+
+      faceapi.matchDimensions(canvas, inputImgEl);
+      // resize detection and landmarks in case displayed image is smaller than
+      // original size
+      const resizedResults = faceapi.resizeResults(
+        fullFaceDescriptions,
+        inputImgEl
+      );
+      // draw boxes with the corresponding label as text
+      const labels = faceMatcher.labeledDescriptors.map(ld => ld.label);
+      resizedResults.forEach(({
+        detection,
+        descriptor
+      }) => {
+        const label = faceMatcher.findBestMatch(descriptor).toString();
+        const options = {
+          label
+        };
+        const drawBox = new faceapi.draw.DrawBox(detection.box, options);
+        drawBox.draw(canvas);
+      });
+    }
+
+    async function updateQueryImageResults() {
+      if (!faceMatcher) {
+        return;
+      }
+
+      const inputImgEl = $("#queryImg").get(0);
+      const canvas = $("#queryImgOverlay").get(0);
+
+      const results = await faceapi
+        .detectAllFaces(inputImgEl, getFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceDescriptors();
+
+      faceapi.matchDimensions(canvas, inputImgEl);
+      // resize detection and landmarks in case displayed image is smaller than
+      // original size
+      const resizedResults = faceapi.resizeResults(results, inputImgEl);
+
+      resizedResults.forEach(({
+        detection,
+        descriptor
+      }) => {
+        const label = faceMatcher.findBestMatch(descriptor).toString();
+        const options = {
+          label
+        };
+        const drawBox = new faceapi.draw.DrawBox(detection.box, options);
+        drawBox.draw(canvas);
+      });
+    }
+
+    async function updateResults() {
+      await updateReferenceImageResults();
+      await updateQueryImageResults();
+    }
+
+    async function run() {
+      // load face detection, face landmark model and face recognition models
+      await changeFaceDetector(selectedFaceDetector);
+      await faceapi.loadFaceLandmarkModel("/");
+      await faceapi.loadFaceRecognitionModel("/");
+    }
+
+    $(document).ready(function () {
+      renderNavBar("#navbar", "face_recognition");
+      initFaceDetectionControls();
+      run();
+    });
+  </script>
+</body>
+
+</html>
