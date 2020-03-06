@@ -6,6 +6,8 @@
   <script src="js/commons.js"></script>
   <script src="js/faceDetectionControls.js"></script>
   <script src="reload/reload.js"></script>
+  <script src="js/axios.min.js"></script>
+  <script src="js/http.js"></script>
   <link rel="stylesheet" href="styles/styles.css" />
   <link href="styles/material-icons.css" rel="stylesheet" />
   <link rel="stylesheet" href="styles/materialize.min.css" />
@@ -108,7 +110,7 @@
     <span id="ssd_mobilenetv1_controls">
       <div class="row side-by-side">
         <div class="row">
-          <label for="minConfidence">Confiança mínima:</label>
+          <label for="minConfidence">Distância máxima:</label>
           <input disabled value="0.5" id="minConfidence" type="text" class="bold" />
         </div>
         <button class="btn-floating btn-small waves-effect waves-light red" onclick="onDecreaseMinConfidence()">
@@ -181,6 +183,7 @@
       );
       // draw boxes with the corresponding label as text
       const labels = faceMatcher.labeledDescriptors.map(ld => ld.label);
+
       resizedResults.forEach(({
         detection,
         descriptor
@@ -212,17 +215,46 @@
       // original size
       const resizedResults = faceapi.resizeResults(results, inputImgEl);
 
-      resizedResults.forEach(({
+      resizedResults.forEach(async ({
         detection,
         descriptor
       }) => {
-        const label = faceMatcher.findBestMatch(descriptor).toString();
+        const maxDistance = $("#minConfidence").get(0).value;
+        let label;
+
+        if (faceMatcher.findBestMatch(descriptor).distance <= maxDistance) {
+          label = faceMatcher.findBestMatch(descriptor).toString() + " = match";
+          const faceImages = await faceapi.extractFaces(inputImgEl, [detection]);
+          await printFace(faceImages[0]);
+
+        } else {
+          label = faceMatcher.findBestMatch(descriptor).toString() + " = no match";
+        }
         const options = {
           label
         };
         const drawBox = new faceapi.draw.DrawBox(detection.box, options);
         drawBox.draw(canvas);
       });
+    }
+
+    async function printFace(face) {
+      try {
+        const {
+          id
+        } = await http.post("/connect/serial", {
+          address: "COM3"
+        });
+        const base64 = face.toDataURL();
+        const image = convertBase64ToFile(base64, "image.png");
+
+        const formData = new FormData();
+        formData.append("image", image);
+
+        await http.post(`1/print/printImage`, formData);
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     async function updateResults() {
