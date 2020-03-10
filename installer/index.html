@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bematech API Server</title>
+    <link rel="stylesheet" href="./styles/roboto.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles/sanuk.css" rel="stylesheet" />
+  </head>
+  <style>
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    body {
+      background-color: #1e1e1e;
+      font-family: Sanuk;
+      color: white;
+    }
+    #spinner {
+      animation-name: spin;
+      animation-duration: 4000ms;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+    }
+    .spacer {
+      margin-top: 20px;
+    }
+    .item {
+      align-self: center;
+    }
+  </style>
+
+  <body>
+    <div class="container">
+      <div class="spacer"></div>
+      <img class="item" src=./images/logo.png>
+      <h3 class="item">Bematech API Server is running</h3>
+      <img class="item" id="spinner" src="./images/spin.png" />
+      <h4 class="item">
+        OBS: By minimizing the window the application will go to taskbar.
+      </h4>
+    </div>
+  </body>
+</html>
