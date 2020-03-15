@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-const reload = require("reload");
 const { get } = require("request");
 
 const app = express();
@@ -49,16 +48,9 @@ app.post("/fetch_external_image", async (req, res) => {
   }
 });
 
-reload(app)
-  .then(reloadReturned => {
-    app.listen(4000, () => console.log("Listening on port 4000!"));
-  })
-  .catch(function(err) {
-    console.error(
-      "Reload could not start, could not start server/sample app",
-      err
-    );
-  });
+app.listen(4000, () => console.log("Listening on port 4000!"));
+
+module.exports = app;
 
 function request(url, returnBuffer = true, timeout = 10000) {
   return new Promise(function(resolve, reject) {

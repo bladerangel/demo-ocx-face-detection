@@ -20,10 +20,13 @@
     "type": "git",
     "url": "https://github.com/bladerangel/demo-ocx-face-detection"
   },
-  "main": "server.js",
+  "main": "main.js",
   "scripts": {
     "start": "node server.js",
-    "start:dev": "nodemon"
+    "start:dev": "nodemon",
+    "electron:start": "electron-builder install-app-deps && electron .",
+    "electron:build:32": "electron-builder --ia32",
+    "electron:build:64": "electron-builder --x64"
   },
   "dependencies": {
     "express": "^4.16.4",
@@ -31,6 +34,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.2",
-    "reload": "^3.0.4"
+    "reload": "^3.0.4",
+    "electron": "^6.1.9",
+    "electron-builder": "^20.44.4"
   }
 }

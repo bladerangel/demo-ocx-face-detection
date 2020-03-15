@@ -1,4 +1,4 @@
 {
   "ext": "*",
-  "exec": "node server.js"
+  "exec": "node hotreload.js"
 }

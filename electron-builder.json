@@ -1,0 +1,24 @@
+{
+  "appId": "demo-ocx-face-detection",
+  "productName": "demo ocx face detection",
+  "artifactName": "demo-ocx-face-detection.${ext}",
+  "files": [
+    "dist",
+    "installer",
+    "public",
+    "views",
+    "weights",
+    "main.js",
+    "server.js"
+  ],
+  "directories": {
+    "buildResources": "installer/icons",
+    "output": "dist_electron"
+  },
+  "linux": {
+    "target": "AppImage"
+  },
+  "win": {
+    "target": "portable"
+  }
+}

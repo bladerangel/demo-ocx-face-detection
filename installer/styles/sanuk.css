@@ -1,0 +1,69 @@
+/* NORMAL */
+@font-face {
+    font-family: "Sanuk";
+    font-style: normal;
+    font-weight: normal;
+    src: url("./fonts/Sanuk/SkLfMd__.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Sanuk";
+    font-style: normal;
+    font-weight: 500;
+    src: url("./fonts/Sanuk/SkLfMd__.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Sanuk";
+    font-style: normal;
+    font-weight: 400;
+    src: url("./fonts/Sanuk/SkLfMd__.ttf") format("truetype");
+}
+
+/* ITALIC */
+@font-face {
+    font-family: "Sanuk";
+    font-style: italic;
+    font-weight: normal;
+    src: url("./fonts/Sanuk/SkLfMdIt.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Sanuk";
+    font-style: italic;
+    font-weight: 500;
+    src: url("./fonts/Sanuk/SkLfMdIt.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Sanuk";
+    font-style: italic;
+    font-weight: 400;
+    src: url("./fonts/Sanuk/SkLfMdIt.ttf") format("truetype");
+}
+
+/* BOLD */
+@font-face {
+    font-family: "Sanuk";
+    font-style: normal;
+    font-weight: bold;
+    src: url("./fonts/Sanuk/SkLfBk__.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Sanuk";
+    font-style: italic;
+    font-weight: bold;
+    src: url("./fonts/Sanuk/SkLfBkIt.ttf") format("truetype");
+}
+
+/* THIN */
+@font-face {
+    font-family: "Sanuk";
+    font-style: normal;
+    font-weight: 300;
+    src: url("./fonts/Sanuk/SkLfLt__.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Sanuk";
+    font-style: italic;
+    font-weight: 300;
+    src: url("./fonts/Sanuk/SkLfLtIt.ttf") format("truetype");
+}
