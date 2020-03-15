@@ -50,6 +50,8 @@ app.post("/fetch_external_image", async (req, res) => {
 
 app.listen(4000, () => console.log("Listening on port 4000!"));
 
+module.exports = app;
+
 function request(url, returnBuffer = true, timeout = 10000) {
   return new Promise(function(resolve, reject) {
     const options = Object.assign(
