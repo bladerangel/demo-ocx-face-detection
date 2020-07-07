@@ -35,7 +35,7 @@
   "devDependencies": {
     "nodemon": "^2.0.2",
     "reload": "^3.0.4",
-    "electron": "^6.1.9",
+    "electron": "^7.2.4",
     "electron-builder": "^20.44.4"
   }
 }
