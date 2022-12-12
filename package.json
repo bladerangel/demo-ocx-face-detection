@@ -29,7 +29,7 @@
     "electron:build:64": "electron-builder --x64"
   },
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "request": "^2.88.0"
   },
   "devDependencies": {
